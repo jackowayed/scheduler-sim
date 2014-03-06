@@ -3,8 +3,7 @@
 
 using namespace std;
 
-vector<vector<int> > FifoSchedule(vector<int> & resources, vector<int> & requests) {
-    vector<vector<int> > results = vector<vector<int> >();
+void FifoSchedule(vector<int> & resources, vector<int> & requests, vector<vector<int> > & results) {
     int resourceIdx = 0;
     for (int i = 0; i < requests.size(); i++) {
         results.push_back(vector<int>());
@@ -13,7 +12,20 @@ vector<vector<int> > FifoSchedule(vector<int> & resources, vector<int> & request
             resourceIdx++;
         }
     }
-    return results;
+}
+
+/*vector<vector<int> > SjnSchedule(vector<int> & resources, vector<int> & requests) {
+    
+  }*/
+
+void PrintStats(vector<vector<int> > & schedule) {
+    // avg time to completion.
+    double sumCompletionTimes = 0;
+    for (int i = 0; i < schedule.size(); i++) {
+        // assumes that resource indices are sorted in the schedule
+        sumCompletionTimes += schedule[i].back();
+    }
+    cout << "Avg time until scheduling: " << sumCompletionTimes / schedule.size() << endl;
 }
 
 int main() {
@@ -21,9 +33,10 @@ int main() {
     int resourceStream[] = {1, 3, 2, 8, 3, 4, 5, 6, 1, 7, 8};
     vector<int> resources(resourceStream, resourceStream + sizeof(resourceStream) / sizeof(resourceStream[0]));
 
-    int requestStream[] = {2, 1};
+    int requestStream[] = {1, 1, 5};
     vector<int> requests(requestStream, requestStream + sizeof(requestStream) / sizeof(requestStream[0]));
-    vector<vector<int> > fifoSched = FifoSchedule(resources, requests);
+    vector<vector<int> > fifoSched = vector<vector<int> >();
+    FifoSchedule(resources, requests, fifoSched);
     
     for (int i = 0; i < fifoSched.size(); i++) {
         for (int j = 0; j < fifoSched[i].size(); j++) {
@@ -31,4 +44,6 @@ int main() {
         }
         cout << endl;
     }
+
+    PrintStats(fifoSched);
 }
