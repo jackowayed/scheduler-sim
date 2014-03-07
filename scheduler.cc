@@ -5,11 +5,18 @@
 
 using namespace std;
 
+void PrintScheduleFormat() {
+    cout << "Schedules are printed in format:" << endl;
+    cout << "job_index: machineOne(resourceIndexOne) machineTwo(resourceIndexTwo) ..."
+         << endl << endl;
+}
 
-void PrintSchedule(vector<vector<int> > & schedule) {
+void PrintSchedule(vector<vector<int> > & schedule, vector<int> & resources) {
     for (int i = 0; i < schedule.size(); i++) {
+        cout << i << ": ";
         for (int j = 0; j < schedule[i].size(); j++) {
-            cout << schedule[i][j] << " ";
+            int resourceIdx = schedule[i][j];
+            cout << resources[resourceIdx] << "(" << resourceIdx << ") ";
         }
         cout << endl;
     }
@@ -76,17 +83,19 @@ int main() {
     vector<int> requests(requestStream, requestStream
                          + sizeof(requestStream) / sizeof(requestStream[0]));
 
+    PrintScheduleFormat();
+
     cout << "FIFO Schedule" << endl;
     vector<vector<int> > fifoSched;
     FifoSchedule(resources, requests, fifoSched);
-    PrintSchedule(fifoSched);
+    PrintSchedule(fifoSched, resources);
     PrintStats(fifoSched);
-    cout << "-------------------" << endl << endl;
+    cout << endl << endl;
 
 
-    cout << "Shorted Job Next Schedule" << endl;
+    cout << "Shortest Job Next Schedule" << endl;
     vector<vector<int> > sjnSchedule(requests.size());
     SjnSchedule(resources, requests, sjnSchedule);
-    PrintSchedule(sjnSchedule);
+    PrintSchedule(sjnSchedule, resources);
     PrintStats(sjnSchedule);
 }
