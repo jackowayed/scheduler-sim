@@ -1,0 +1,87 @@
+Preamble: My interpretation
+---------------------------
+
+I was a bit unsure how to factor time into this problem. After a brief
+email exchange with Adam, I decided to interpret the problem as
+follows: We are scheduling a set of jobs that are already all in the
+system. Resources, on the other hand, are being freed up at a constant
+rate. That is, a unit of time elapses each time we advance to the next
+available resource.
+
+Since there was no indication of the length of time that jobs would
+take, I decided to focus on how long (again, with time passage
+corresponding with going farther into the resource stream) it took us
+to give a job all of the resources that a job needed.
+
+
+Proposal: Shortest Job Next Scheduler
+=====================================
+
+I propose that we change from a FIFO scheduler to a Smallest Job Next
+scheduler. This will minimize the mean time for a job to receive the
+resources it has requested and prevent one large job from blocking
+many small jobs while it waits for all resources it needs to be ready.
+
+Smallest Job Next is known to optimize the mean time until scheduling
+in the system as a whole.
+
+Current state
+-------------
+
+Currently we have a simple first-come, first-served scheduler. This is
+simple to implement, however, one large job can block small jobs for a
+considerable length of time. It is entirely possible that while a
+large job is waiting to obtain enough resources, we will be reserving
+enough resources that smaller jobs that are behind the large job in
+the queue could use those idle resources and complete before the large
+job even begins to use them.
+
+FIFO is not the best scheme for ensuring that users with small
+resource needs are served quickly or for minimizing the mean time to
+completion in the system.
+
+
+Example case
+------------
+
+Consider three requests that come in in the following order: a request
+for 10 resource units, a request for 1, and another request for 1.
+Both schemes are simulated in the attached C++ code. The results are
+as follows:
+
+FIFO Schedule
+0: 1(0) 3(1) 2(2) 8(3) 3(4) 4(5) 5(6) 6(7) 1(8) 7(9)
+1: 8(10)
+2: 2(11)
+Avg time until scheduling: 10
+
+
+Shortest Job Next Schedule
+0: 2(2) 8(3) 3(4) 4(5) 5(6) 6(7) 1(8) 7(9) 8(10) 2(11)
+1: 1(0)
+2: 3(1)
+Avg time until scheduling: 4
+
+
+The schedules printed above are formatted as follows: each line
+corresponds to a job, and there is a space separated list that first
+shows what machine will serve each resource unit, and in parentheses,
+the time when each resource became available.
+
+We see that in this case, the mean time until a job is scheduled is
+more than twice as good with the proposed scheduling algorithm. In
+general, it can be arbitrarily better.
+
+Drawbacks
+---------
+
+In a live system where jobs are constantly coming in, this may cause
+starvation of large jobs. We should consider more elaborate systems
+that have some of the benefits of my proposal, yet also assure quality
+of service to all jobs.
+
+The current implementation also assumes that we know all jobs ahead of
+time. However, it would be simple to rewrite this as an online
+algorithm by simply keeping a priority queue of outstanding resource
+requests and serving the smallest one as soon as all of its resources
+are ready.
