@@ -76,16 +76,17 @@ int main() {
     vector<int> requests(requestStream, requestStream
                          + sizeof(requestStream) / sizeof(requestStream[0]));
 
+    cout << "FIFO Schedule" << endl;
     vector<vector<int> > fifoSched;
     FifoSchedule(resources, requests, fifoSched);
-
     PrintSchedule(fifoSched);
     PrintStats(fifoSched);
+    cout << "-------------------" << endl << endl;
 
+
+    cout << "Shorted Job Next Schedule" << endl;
     vector<vector<int> > sjnSchedule(requests.size());
     SjnSchedule(resources, requests, sjnSchedule);
-
-    cout << "----" << endl;
     PrintSchedule(sjnSchedule);
     PrintStats(sjnSchedule);
 }
